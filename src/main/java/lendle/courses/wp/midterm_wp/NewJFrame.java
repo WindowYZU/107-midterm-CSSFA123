@@ -15,6 +15,8 @@ import java.util.logging.Logger;
 import javafx.scene.AccessibleAttribute;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.ProgressMonitor;
 import javax.swing.SwingUtilities;
 
@@ -52,6 +54,11 @@ public class NewJFrame extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "https://mbtskoudsalg.com/images/png-image-7.png", "http://pngimg.com/uploads/eagle/eagle_PNG1227.png", "https://upload.wikimedia.org/wikipedia/commons/4/4a/Photographer_Barnstar.png", "http://pluspng.com/img-png/bulb-hd-png-light-bulb-png-transparent-image-2048.png", " " }));
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
 
         jScrollPane1.setViewportView(jList1);
 
@@ -98,11 +105,13 @@ public class NewJFrame extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        
         try {
             jButton1.setEnabled(false);
             //從 combobox 抓出被選到的項目，存到變數裡
-            String selectedItem="";
-            /////////////////////////////////////
+            String selectedItem=(String)jComboBox1.getSelectedItem();
+            
+            /////////////////////////////////////////////
             URL url = new URL(selectedItem);
             String fileName = url.getFile();
             final File tempFile = File.createTempFile("tmp", fileName.substring(fileName.lastIndexOf(".")));
@@ -115,9 +124,17 @@ public class NewJFrame extends javax.swing.JFrame {
                 public void totalBytesDownloaded(long bytes, boolean finished, boolean failed) {
                     //implement this
                     if (finished) {
-                        progress.setVisible(false);
+                        progress.setVisible(true);
                         jButton1.setEnabled(true);
                         //將下載好的項目加入到 jList 裡面
+                        JFrame frame = new JFrame();
+                        
+                        DefaultListModel model=(DefaultListModel)jList1.getModel();
+                        model.addElement(tempFile);
+                        
+                                    
+                        frame.add(jList1);
+  
                         
                         ////////////////////////////
                         SwingUtilities.invokeLater(new Runnable() {
@@ -126,6 +143,13 @@ public class NewJFrame extends javax.swing.JFrame {
                                 try {
                                     URL fileURL=tempFile.toURI().toURL();
                                     //利用 fileURL 將 image icon 加到 jLabel2
+                                    
+                                    ImageIcon icon=new ImageIcon(new URL(selectedItem));
+                                    Image img=icon.getImage();
+                                    ImageIcon icon2=new ImageIcon(img);
+                                    jLabel2.setIcon(icon2);
+                                    frame.add(jLabel2);
+                                    
                                     ////////////////////////////////////////
                                     jList1.updateUI();
                                 } catch (Exception ex) {
@@ -146,6 +170,10 @@ public class NewJFrame extends javax.swing.JFrame {
             ex.printStackTrace();
         }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox1ActionPerformed
 
     /**
      * @param args the command line arguments
